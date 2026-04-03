@@ -6,6 +6,7 @@
 - Markdown 渲染
 - 分类、标签、归档、合集
 - RSS、Sitemap、Open Graph
+- 内容校验与构建
 
 
 ## 目录关系
@@ -25,6 +26,8 @@ content: {
 }
 ```
 
+文章创建脚手架已经迁移到 `blog-content` 仓库。`framework` 不再负责生成文章模板或资源目录。
+
 ## 本地开发
 
 ```bash
@@ -36,4 +39,10 @@ npm run dev
 
 ```bash
 npm run check
+```
+
+只校验内容时可以单独运行：
+
+```bash
+npm run validate:content
 ```
