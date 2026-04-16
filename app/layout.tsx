@@ -61,7 +61,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang={blogConfig.site.language}>
+    <html data-scroll-behavior="smooth" lang={blogConfig.site.language}>
       <body>
         <SiteShell>{children}</SiteShell>
       </body>

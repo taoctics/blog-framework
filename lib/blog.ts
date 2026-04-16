@@ -27,6 +27,7 @@ type RawFrontmatter = {
   categories?: string[] | string;
   tags?: string[] | string;
   collections?: string[] | string;
+  collectionOrder?: number | string;
   draft?: boolean;
 };
 
@@ -38,6 +39,7 @@ export type Post = {
   categories: string[];
   tags: string[];
   collections: string[];
+  collectionOrder: number | null;
   draft: boolean;
   content: string;
   sourcePath: string;
@@ -50,6 +52,20 @@ export type TaxonomyBucket = {
   name: string;
   slug: string;
   posts: PostPreview[];
+};
+
+export type CollectionNavigationItem = {
+  slug: string;
+  title: string;
+  date: string;
+  collectionOrder: number | null;
+  isCurrent: boolean;
+};
+
+export type CollectionNavigationGroup = {
+  name: string;
+  slug: string;
+  items: CollectionNavigationItem[];
 };
 
 export type ArchiveMonth = {
@@ -77,6 +93,30 @@ function toArray(value: string[] | string | undefined) {
 
 function sortPosts(posts: PostPreview[]) {
   return posts.toSorted((left, right) => compareIsoDatesDescending(left.date, right.date));
+}
+
+function compareCollectionPosts(left: Pick<PostPreview, "collectionOrder" | "date" | "title">, right: Pick<PostPreview, "collectionOrder" | "date" | "title">) {
+  if (left.collectionOrder !== null && right.collectionOrder !== null) {
+    return (
+      left.collectionOrder - right.collectionOrder ||
+      compareIsoDatesDescending(left.date, right.date) ||
+      left.title.localeCompare(right.title)
+    );
+  }
+
+  if (left.collectionOrder !== null) {
+    return -1;
+  }
+
+  if (right.collectionOrder !== null) {
+    return 1;
+  }
+
+  return compareIsoDatesDescending(left.date, right.date) || left.title.localeCompare(right.title);
+}
+
+export function sortPostsForCollection(posts: PostPreview[]) {
+  return posts.toSorted(compareCollectionPosts);
 }
 
 function invalidFrontmatter(filePath: string, message: string): never {
@@ -153,6 +193,25 @@ function normalizeStringList(
   return list.map((item) => item.trim()).filter(Boolean);
 }
 
+function normalizeCollectionOrder(filePath: string, value: number | string | undefined) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const parsedValue =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+        ? Number(value.trim())
+        : Number.NaN;
+
+  if (!Number.isFinite(parsedValue)) {
+    invalidFrontmatter(filePath, 'Expected "collectionOrder" to be a number.');
+  }
+
+  return parsedValue;
+}
+
 function normalizePost(sourceFile: PostSource): Post {
   const source = fs.readFileSync(sourceFile.filePath, "utf8");
   const { data, content } = matter(source);
@@ -181,6 +240,7 @@ function normalizePost(sourceFile: PostSource): Post {
       "collections",
       frontmatter.collections
     ),
+    collectionOrder: normalizeCollectionOrder(sourceFile.filePath, frontmatter.collectionOrder),
     draft: Boolean(frontmatter.draft),
     content,
     sourcePath: sourceFile.filePath,
@@ -238,7 +298,7 @@ function groupTaxonomy(
   const taxonomyBuckets = Array.from(buckets.entries()).map(([name, groupedPosts]) => ({
     name,
     slug: slugifySegment(name),
-    posts: sortPosts(groupedPosts)
+    posts: field === "collections" ? sortPostsForCollection(groupedPosts) : sortPosts(groupedPosts)
   }));
 
   const seen = new Map<string, string>();
@@ -278,6 +338,36 @@ export function getCategoryBySlug(slug: string) {
 
 export function getCollectionBySlug(slug: string) {
   return getCollectionBuckets().find((bucket) => bucket.slug === slug) || null;
+}
+
+export function getCollectionNavigationForPost(slug: string): CollectionNavigationGroup[] {
+  const post = getPostBySlug(slug);
+
+  if (!post || post.collections.length === 0) {
+    return [];
+  }
+
+  return post.collections
+    .map((collectionName) => {
+      const collection = getCollectionBuckets().find((bucket) => bucket.name === collectionName);
+
+      if (!collection) {
+        return null;
+      }
+
+      return {
+        name: collection.name,
+        slug: collection.slug,
+        items: collection.posts.map((item) => ({
+          slug: item.slug,
+          title: item.title,
+          date: item.date,
+          collectionOrder: item.collectionOrder,
+          isCurrent: item.slug === slug
+        }))
+      };
+    })
+    .filter((group): group is CollectionNavigationGroup => group !== null);
 }
 
 export function getTagBySlug(slug: string) {

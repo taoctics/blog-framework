@@ -4,12 +4,14 @@ import { notFound } from "next/navigation";
 
 import { blogConfig } from "@/blog.config";
 import { ArticleTableOfContents } from "@/components/article-table-of-contents";
+import { PostContentHtml } from "@/components/post-content-html";
 import { PostPager } from "@/components/post-pager";
 import { PostTaxonomyGroups } from "@/components/post-taxonomy-groups";
 import { RelatedPosts } from "@/components/related-posts";
 import {
   formatDate,
   getAdjacentPosts,
+  getCollectionNavigationForPost,
   getPostBySlug,
   getPostPreviews,
   getRelatedPosts
@@ -61,6 +63,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const html = await renderMarkdown(post.content, { postSlug: post.slug });
   const tableOfContents = extractTableOfContents(post.content);
+  const collectionGroups = getCollectionNavigationForPost(post.slug);
   const { newerPost, olderPost } = getAdjacentPosts(post.slug);
   const relatedPosts = getRelatedPosts(post.slug);
 
@@ -99,10 +102,12 @@ export default async function PostPage({ params }: PostPageProps) {
               ]}
             />
           </header>
-          <div className="article-prose" dangerouslySetInnerHTML={{ __html: html }} />
+          <PostContentHtml html={html} />
         </article>
 
         <ArticleTableOfContents
+          collectionGroups={collectionGroups}
+          collectionsLabel={blogConfig.theme.labels.collections}
           items={tableOfContents}
           title={blogConfig.theme.labels.tableOfContents}
         />

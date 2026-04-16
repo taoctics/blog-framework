@@ -84,6 +84,22 @@ function visit(node: MarkdownNode | undefined, callback: (currentNode: MarkdownN
   }
 }
 
+function getClassNames(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string");
+  }
+
+  if (typeof value === "string") {
+    return value.split(/\s+/).filter(Boolean);
+  }
+
+  return [];
+}
+
+function hasClassName(node: MarkdownNode | undefined, className: string) {
+  return getClassNames(node?.properties?.className).includes(className);
+}
+
 function rehypeHeadingIds() {
   return (tree: MarkdownNode) => {
     const createHeadingId = createUniqueHeadingIdFactory();
@@ -154,6 +170,33 @@ function rehypePostAssetUrls(options: RenderMarkdownOptions) {
   };
 }
 
+function rehypeMermaidBlocks() {
+  return (tree: MarkdownNode) => {
+    visit(tree, (node) => {
+      if (node.tagName !== "pre" || !node.children?.length) {
+        return;
+      }
+
+      const codeNode = node.children[0];
+
+      if (codeNode?.tagName !== "code" || !hasClassName(codeNode, "language-mermaid")) {
+        return;
+      }
+
+      node.tagName = "div";
+      node.properties = {
+        className: ["mermaid"]
+      };
+      node.children = [
+        {
+          type: "text",
+          value: collectElementText(codeNode)
+        }
+      ];
+    });
+  };
+}
+
 export function extractTableOfContents(
   markdown: string,
   options: {
@@ -200,6 +243,7 @@ export async function renderMarkdown(markdown: string, options: RenderMarkdownOp
     .use(rehypeHeadingIds)
     .use(rehypePostAssetUrls, options)
     .use(rehypeKatex)
+    .use(rehypeMermaidBlocks)
     .use(rehypeHighlight, { detect: true, ignoreMissing: true })
     .use(rehypeStringify)
     .process(markdown);

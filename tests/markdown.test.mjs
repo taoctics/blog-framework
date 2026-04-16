@@ -46,3 +46,19 @@ test("renderMarkdown rewrites relative post asset URLs", async () => {
     /<a href="\/posts\/%E5%90%AF%E5%8A%A8%E6%97%A5%E5%BF%97\/assets\/assets\/appendix\.pdf#download">附件<\/a>/
   );
 });
+
+test("renderMarkdown converts mermaid fences into Mermaid containers", async () => {
+  const html = await renderMarkdown(
+    `
+\`\`\`mermaid
+graph TD
+  A[Start] --> B[Done]
+\`\`\`
+`
+  );
+
+  assert.match(html, /<div class="mermaid">/);
+  assert.match(html, /graph TD/);
+  assert.doesNotMatch(html, /language-mermaid/);
+  assert.doesNotMatch(html, /<pre><code/);
+});
