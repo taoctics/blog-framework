@@ -62,3 +62,35 @@ graph TD
   assert.doesNotMatch(html, /language-mermaid/);
   assert.doesNotMatch(html, /<pre><code/);
 });
+
+test("renderMarkdown preserves raw HTML blocks such as paper metadata definition lists", async () => {
+  const html = await renderMarkdown(
+    `
+<dl class="paper-metadata">
+  <dt>论文标题</dt>
+  <dd><cite>Attention Is All You Need</cite></dd>
+  <dt>年份</dt>
+  <dd>2017</dd>
+</dl>
+`
+  );
+
+  assert.match(html, /<dl class="paper-metadata">/);
+  assert.match(html, /<dt>论文标题<\/dt>/);
+  assert.match(html, /<dd><cite>Attention Is All You Need<\/cite><\/dd>/);
+});
+
+test("renderMarkdown preserves KaTeX hooks for inline and display math", async () => {
+  const html = await renderMarkdown(
+    `
+Inline $a+b$ and block:
+
+$$
+\\frac{a+b+c+d+e+f+g+h+i+j}{x+y+z}
+$$
+`
+  );
+
+  assert.match(html, /<span class="katex">/);
+  assert.match(html, /<span class="katex-display"><span class="katex">/);
+});

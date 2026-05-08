@@ -239,13 +239,13 @@ export async function renderMarkdown(markdown: string, options: RenderMarkdownOp
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkMath)
-    .use(remarkRehype)
+    .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeHeadingIds)
     .use(rehypePostAssetUrls, options)
     .use(rehypeKatex)
     .use(rehypeMermaidBlocks)
     .use(rehypeHighlight, { detect: true, ignoreMissing: true })
-    .use(rehypeStringify)
+    .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
 
   return String(file);
