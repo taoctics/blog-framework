@@ -827,8 +827,12 @@ kbd {
   padding: 18px 20px;
   border: 1px solid rgba(28, 28, 24, 0.08);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(248, 243, 234, 0.92));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.6), transparent 34%),
+    linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(246, 240, 231, 0.93));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 1px 2px rgba(28, 28, 24, 0.03);
   white-space: pre-wrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
@@ -845,8 +849,21 @@ kbd {
 .article-prose .mermaid svg text,
 .article-prose .mermaid .label,
 .article-prose .mermaid .cluster-label,
-.article-prose .mermaid .nodeLabel {
+.article-prose .mermaid .nodeLabel,
+.article-prose .mermaid .messageText,
+.article-prose .mermaid .noteText {
   letter-spacing: 0.01em;
+}
+
+.article-prose .mermaid svg .node rect,
+.article-prose .mermaid svg .node circle,
+.article-prose .mermaid svg .node ellipse,
+.article-prose .mermaid svg .node polygon,
+.article-prose .mermaid svg .node path,
+.article-prose .mermaid svg .actor,
+.article-prose .mermaid svg .labelBox,
+.article-prose .mermaid svg .note {
+  stroke-width: 1.15px;
 }
 
 .article-prose .mermaid svg path,
@@ -862,6 +879,14 @@ kbd {
 .article-prose .mermaid svg .cluster rect {
   rx: 14px;
   ry: 14px;
+}
+
+.article-prose .mermaid svg .edgeLabel {
+  color: rgba(31, 31, 26, 0.82);
+}
+
+.article-prose .mermaid svg marker path {
+  stroke-width: 1px;
 }
 
 .article-prose .mermaid::-webkit-scrollbar {
