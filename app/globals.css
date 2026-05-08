@@ -860,6 +860,48 @@ kbd {
   background: var(--line);
 }
 
+.article-prose .paper-metadata {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.28rem 1rem;
+  margin: 0.85rem 0 1.45rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--muted);
+  background: rgba(28, 28, 24, 0.03);
+  border: 1px solid rgba(28, 28, 24, 0.08);
+  border-radius: 10px;
+}
+
+.article-prose .paper-metadata dt {
+  margin: 0;
+  font-weight: 600;
+  color: rgba(28, 28, 24, 0.72);
+}
+
+.article-prose .paper-metadata dd {
+  margin: 0;
+  min-width: 0;
+  color: rgba(28, 28, 24, 0.9);
+}
+
+.article-prose .paper-metadata dd + dt {
+  margin-top: 0.12rem;
+}
+
+.article-prose .paper-metadata cite {
+  font-style: italic;
+}
+
+.article-prose .paper-metadata a {
+  color: inherit;
+}
+
+.article-prose .paper-metadata a:hover {
+  color: var(--text);
+}
+
 .article-prose table {
   display: block;
   width: 100%;
@@ -867,6 +909,48 @@ kbd {
   overflow-x: auto;
   border-collapse: collapse;
   border-radius: 14px;
+}
+
+.article-prose .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2rem 0 0.45rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(98, 97, 84, 0.38) transparent;
+}
+
+.article-prose .katex-display > .katex {
+  min-width: max-content;
+}
+
+.article-prose .katex-inline-scroll {
+  display: inline-block;
+  max-width: 100%;
+  padding-bottom: 0.18rem;
+  vertical-align: middle;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(98, 97, 84, 0.38) transparent;
+}
+
+.article-prose .katex-display::-webkit-scrollbar,
+.article-prose .katex-inline-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.article-prose .katex-display::-webkit-scrollbar-thumb,
+.article-prose .katex-inline-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(98, 97, 84, 0.32);
+}
+
+.article-prose .katex-display::-webkit-scrollbar-track,
+.article-prose .katex-inline-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .article-prose th,
@@ -1162,6 +1246,22 @@ kbd {
     font-size: 1rem;
   }
 
+  .article-prose .paper-metadata {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+    padding: 0.75rem 0.85rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .article-prose .paper-metadata dt {
+    margin-top: 0.2rem;
+  }
+
+  .article-prose .paper-metadata dd + dt {
+    margin-top: 0.45rem;
+  }
+
   .article-prose pre,
   .article-prose .mermaid {
     margin-right: -4px;
@@ -1172,6 +1272,13 @@ kbd {
 
   .article-prose table {
     white-space: nowrap;
+  }
+
+  .article-prose .katex-display {
+    margin-right: -4px;
+    margin-left: -4px;
+    padding-right: 4px;
+    padding-left: 4px;
   }
 
   .post-nav-card-empty {
