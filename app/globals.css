@@ -824,11 +824,15 @@ kbd {
 
 .article-prose .mermaid {
   overflow-x: auto;
-  padding: 18px;
+  padding: 18px 20px;
   border: 1px solid rgba(28, 28, 24, 0.08);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(248, 243, 234, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   white-space: pre-wrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(98, 97, 84, 0.28) transparent;
 }
 
 .article-prose .mermaid svg {
@@ -836,6 +840,41 @@ kbd {
   max-width: 100%;
   height: auto;
   margin: 0 auto;
+}
+
+.article-prose .mermaid svg text,
+.article-prose .mermaid .label,
+.article-prose .mermaid .cluster-label,
+.article-prose .mermaid .nodeLabel {
+  letter-spacing: 0.01em;
+}
+
+.article-prose .mermaid svg path,
+.article-prose .mermaid svg line {
+  stroke-width: 1.35px;
+}
+
+.article-prose .mermaid svg .edgeLabel rect,
+.article-prose .mermaid svg .labelBkg {
+  fill: rgba(255, 253, 248, 0.96) !important;
+}
+
+.article-prose .mermaid svg .cluster rect {
+  rx: 14px;
+  ry: 14px;
+}
+
+.article-prose .mermaid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.article-prose .mermaid::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(98, 97, 84, 0.24);
+}
+
+.article-prose .mermaid::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .article-prose code:not(pre code) {
@@ -1268,6 +1307,10 @@ kbd {
     margin-left: -4px;
     padding: 14px;
     border-radius: 14px;
+  }
+
+  .article-prose .mermaid {
+    padding: 14px 15px;
   }
 
   .article-prose table {
